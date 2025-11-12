@@ -2,6 +2,20 @@ import { TimelineItem } from '../models/timeline';
 
 
 export const TIMELINE: TimelineItem[] = [
+  {
+id: '2025-workout-app',
+kind: 'project',
+title: 'Workout & Training Management App',
+org: 'Side Project',
+description: 'A personal project to develop a workout and training management application using Angular 19 for the frontend and PHP for the backend. The app allows users to create, track, and analyze their workout routines with a focus on usability and performance.',
+tech: ['Angular 19', 'Javascript', 'PHP', 'MySQL', 'RxJS', 'Bootstrap', 'Performance Optimization'],
+start: '2025-03',
+end: 'present',
+highlight: true,
+links: [
+{ label: 'Panel de entrenamientos : Github', url: 'https://github.com/FromTheWell/panel-entrenamientos-angular-php' },
+]
+},
 {
 id: '2025-misquad',
 kind: 'job',

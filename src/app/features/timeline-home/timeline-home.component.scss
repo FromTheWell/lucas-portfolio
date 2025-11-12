@@ -13,8 +13,16 @@
 
 
 .chips { display: flex; gap: .5rem; flex-wrap: wrap; }
-.chip { background: #0f1318; color: var(--fg); border: 1px solid #1b222c; padding: .4rem .75rem; border-radius: 999px; cursor: pointer; font-size: .875rem; }
+.chip { background: #0f1318; color: var(--fg); border: 1px solid #1b222c; padding: .4rem .75rem; border-radius: 999px; cursor: pointer; font-size: .875rem; text-transform: uppercase; transition: border-color .2s ease, background-color .2s ease, color .2s ease; }
 .chip.active { background: var(--accent); color: #0b1020; border-color: transparent; }
+
+/* Borde de chip por tipo (usa misma paleta que badge -> border-color) */
+.chip[data-kind="project"] { border-color: #134e4a; }
+.chip[data-kind="job"] { border-color: #1e3a8a; }
+.chip[data-kind="education"] { border-color: #854d0e; }
+.chip[data-kind="award"] { border-color: #7f1d1d; }
+.chip[data-kind="talk"] { border-color: #3730a3; }
+.chip[data-kind="oss"] { border-color: #6d28d9; }
 
 
 .timeline { background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 20%), var(--bg); color: var(--fg); }
@@ -26,7 +34,7 @@
 
 
 .entry { position: relative; margin: 1rem 0 1.5rem 0; padding-left: 5rem; }
-.dot { position: absolute; left: 1.75rem; top: .75rem; width: .85rem; height: .85rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(122,162,247,.15); }
+.dot { position: absolute; left: 1.75rem; top: .75rem; width: .85rem; height: .85rem; border-radius: 50%; background: var(--dot-color, var(--accent)); box-shadow: 0 0 0 4px var(--dot-ring, rgba(122,162,247,.15)); transition: box-shadow .25s ease, background-color .25s ease; }
 
 
 .entry header h3 { margin: 0; font-size: 1.1rem; line-height: 1.3; }
@@ -55,7 +63,22 @@
 /* Card look */
 .entry { border-left: 0; }
 .entry > *:not(.dot):not(header) { position: relative; z-index: 1; }
-.entry header { position: relative; z-index: 1; background: var(--card); border: 1px solid #1b222c; padding: .85rem 1rem; border-radius: .75rem; box-shadow: 0 2px 0 rgba(0,0,0,.2); }
+.entry header { position: relative; z-index: 1; background: var(--card); border: 1px solid #1b222c; padding: .85rem 1rem; border-radius: .75rem; box-shadow: 0 2px 0 rgba(0,0,0,.2); transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease; }
+
+/* Hover/focus card effect with colored glow by kind */
+/* Default shadow color (fallback to accent) */
+.entry { --shadow-color: rgba(122,162,247,.25); --shadow-line: rgba(122,162,247,.45); --dot-color: var(--accent); --dot-ring: rgba(122,162,247,.15); }
+
+.entry:hover header,
+.entry:focus-within header { transform: translateY(-2px); box-shadow: 0 10px 24px -8px var(--shadow-color), 0 0 0 1px var(--shadow-line); border-color: var(--shadow-line); }
+
+/* Map shadow variables per kind (matching badge palette) */
+.entry[data-kind="project"] { --shadow-color: rgba(167,243,208,.25); --shadow-line: rgba(167,243,208,.45); --dot-color: #a7f3d0; --dot-ring: rgba(167,243,208,.18); }
+.entry[data-kind="job"] { --shadow-color: rgba(147,197,253,.25); --shadow-line: rgba(147,197,253,.45); --dot-color: #93c5fd; --dot-ring: rgba(147,197,253,.18); }
+.entry[data-kind="education"] { --shadow-color: rgba(253,230,138,.25); --shadow-line: rgba(253,230,138,.45); --dot-color: #fde68a; --dot-ring: rgba(253,230,138,.18); }
+.entry[data-kind="award"] { --shadow-color: rgba(252,165,165,.25); --shadow-line: rgba(252,165,165,.45); --dot-color: #fca5a5; --dot-ring: rgba(252,165,165,.18); }
+.entry[data-kind="talk"] { --shadow-color: rgba(199,210,254,.25); --shadow-line: rgba(199,210,254,.45); --dot-color: #c7d2fe; --dot-ring: rgba(199,210,254,.18); }
+.entry[data-kind="oss"] { --shadow-color: rgba(221,214,254,.25); --shadow-line: rgba(221,214,254,.45); --dot-color: #ddd6fe; --dot-ring: rgba(221,214,254,.18); }
 
 
 /* Appear animation */

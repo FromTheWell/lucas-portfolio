@@ -14,6 +14,7 @@ aria-label="Buscar en la línea temporal"
 <div class="chips" role="tablist" aria-label="Filtro por tipo">
 <button *ngFor="let k of kinds"
 class="chip"
+[attr.data-kind]="k"
 [class.active]="kind()===k"
 (click)="kind.set(k)"
 role="tab" [attr.aria-selected]="kind()===k">{{ k }}</button>
@@ -32,7 +33,7 @@ role="tab" [attr.aria-selected]="kind()===k">{{ k }}</button>
 <div class="year" [attr.aria-label]="'Año ' + grp[0]">{{ grp[0] }}</div>
 
 
-<article class="entry" *ngFor="let it of grp[1]" tabindex="0">
+<article class="entry" *ngFor="let it of grp[1]" tabindex="0" [attr.data-kind]="it.kind">
 <div class="dot" aria-hidden="true"></div>
 <header>
 <h3>
