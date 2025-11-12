@@ -1,0 +1,75 @@
+:root { --bg: #0b0d10; --fg: #e6edf3; --muted: #9aa4af; --card: #12161b; --rail: #1f2833; --accent: #7aa2f7; }
+:root.using-keyboard *:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+
+.hero { background: radial-gradient(1200px 600px at 10% -10%, rgba(122,162,247,.15), transparent), var(--bg); color: var(--fg); }
+.hero .container { max-width: 920px; margin: 0 auto; padding: 5rem 1rem 2rem; }
+.hero h1 { font-size: clamp(2rem, 1rem + 3vw, 3.25rem); margin: 0 0 .25rem; }
+.hero .subtitle { margin: 0 0 1.5rem; color: var(--muted); }
+
+
+.filters { display: grid; gap: .75rem; }
+.filters input[type="search"] { background: var(--card); border: 1px solid #1b222c; color: var(--fg); padding: .75rem 1rem; border-radius: .75rem; }
+
+
+.chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+.chip { background: #0f1318; color: var(--fg); border: 1px solid #1b222c; padding: .4rem .75rem; border-radius: 999px; cursor: pointer; font-size: .875rem; }
+.chip.active { background: var(--accent); color: #0b1020; border-color: transparent; }
+
+
+.timeline { background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 20%), var(--bg); color: var(--fg); }
+.timeline .container { max-width: 920px; margin: 0 auto; padding: 2rem 1rem 6rem; position: relative; }
+
+
+.rail { position: absolute; left: 2rem; top: 0; bottom: 0; width: 3px; background: var(--rail); border-radius: 2px; }
+.year { position: sticky; left: 0; top: 0; font-weight: 700; color: var(--muted); margin: 2rem 0 .5rem 0; padding-left: 5rem; backdrop-filter: blur(6px); }
+
+
+.entry { position: relative; margin: 1rem 0 1.5rem 0; padding-left: 5rem; }
+.dot { position: absolute; left: 1.75rem; top: .75rem; width: .85rem; height: .85rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(122,162,247,.15); }
+
+
+.entry header h3 { margin: 0; font-size: 1.1rem; line-height: 1.3; }
+.entry header h3 small { color: var(--muted); font-weight: 400; }
+.entry .dates { margin: .25rem 0 .5rem; color: var(--muted); font-size: .9rem; display: flex; gap: .35rem; align-items: center; }
+.entry .location { color: var(--muted); }
+
+
+.badge { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; background: #0f1318; border: 1px solid #1b222c; color: var(--muted); padding: .2rem .5rem; border-radius: .5rem; margin-right: .5rem; }
+.badge[data-kind="project"] { color: #a7f3d0; border-color: #134e4a; background: #052e2b; }
+.badge[data-kind="job"] { color: #93c5fd; border-color: #1e3a8a; background: #0b1536; }
+.badge[data-kind="education"] { color: #fde68a; border-color: #854d0e; background: #2a1b06; }
+.badge[data-kind="award"] { color: #fca5a5; border-color: #7f1d1d; background: #2a0c0c; }
+.badge[data-kind="talk"] { color: #c7d2fe; border-color: #3730a3; background: #121136; }
+.badge[data-kind="oss"] { color: #ddd6fe; border-color: #6d28d9; background: #1a0b3a; }
+
+
+.desc { margin: .25rem 0 .5rem; color: #d6dbe3; }
+.tech { display: flex; gap: .5rem; flex-wrap: wrap; list-style: none; padding: 0; margin: 0 0 .5rem; }
+.tech li { font-size: .75rem; background: #0f1318; border: 1px solid #1b222c; padding: .25rem .5rem; border-radius: .5rem; color: var(--muted); }
+.links { display: flex; gap: .75rem; }
+.links a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed transparent; }
+.links a:hover { border-bottom-color: var(--accent); }
+
+
+/* Card look */
+.entry { border-left: 0; }
+.entry::after { content: ''; display: block; background: var(--card); border: 1px solid #1b222c; border-radius: .75rem; padding: 1rem; margin-top: .25rem; }
+.entry > *:not(.dot):not(header) { position: relative; z-index: 1; }
+.entry header { position: relative; z-index: 1; background: var(--card); border: 1px solid #1b222c; padding: .85rem 1rem; border-radius: .75rem; box-shadow: 0 2px 0 rgba(0,0,0,.2); }
+
+
+/* Appear animation */
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.entry { opacity: 0; animation: rise .6s ease forwards; }
+.entry:nth-child(2) { animation-delay: .05s; }
+.entry:nth-child(3) { animation-delay: .1s; }
+
+
+/* Responsive */
+@media (max-width: 680px) {
+.rail { left: 1rem; }
+.entry { padding-left: 3.25rem; }
+.dot { left: .6rem; }
+.year { padding-left: 3.25rem; }
+}

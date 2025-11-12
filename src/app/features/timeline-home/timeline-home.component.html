@@ -1,0 +1,63 @@
+<section class="hero">
+<div class="container">
+<h1>Lucas del Pozo</h1>
+<p class="subtitle">Full Stack Developer · Angular · PHP · Storybook · Jenkins</p>
+
+
+<div class="filters" role="search">
+<input #searchBox
+type="search"
+placeholder="Buscar (Angular, Jenkins, JCCM, ...)"
+(input)="search.set(searchBox.value)"
+aria-label="Buscar en la línea temporal"
+/>
+<div class="chips" role="tablist" aria-label="Filtro por tipo">
+<button *ngFor="let k of kinds"
+class="chip"
+[class.active]="kind()===k"
+(click)="kind.set(k)"
+role="tab" [attr.aria-selected]="kind()===k">{{ k }}</button>
+</div>
+</div>
+</div>
+</section>
+
+
+<section class="timeline">
+<div class="container">
+<div class="rail" aria-hidden="true"></div>
+
+
+<ng-container *ngFor="let grp of groups()">
+<div class="year" [attr.aria-label]="'Año ' + grp[0]">{{ grp[0] }}</div>
+
+
+<article class="entry" *ngFor="let it of grp[1]" tabindex="0">
+<div class="dot" aria-hidden="true"></div>
+<header>
+<h3>
+<span class="badge" [attr.data-kind]="it.kind">{{ it.kind }}</span>
+{{ it.title }} <small *ngIf="it.org">— {{ it.org }}</small>
+</h3>
+<p class="dates">
+<span>{{ it.start | date:'MMM y' }}</span>
+<span>→</span>
+<span>{{ it.end === 'present' ? 'Ahora' : (it.end | date:'MMM y') }}</span>
+<span *ngIf="it.location" class="location">· {{ it.location }}</span>
+</p>
+</header>
+
+
+<p class="desc" *ngIf="it.description">{{ it.description }}</p>
+<ul class="tech" *ngIf="it.tech?.length">
+<li *ngFor="let t of it.tech">{{ t }}</li>
+</ul>
+
+
+<nav class="links" *ngIf="it.links?.length">
+<a *ngFor="let l of it.links" [href]="l.url" target="_blank" rel="noopener noreferrer">{{ l.label }}</a>
+</nav>
+</article>
+</ng-container>
+</div>
+</section>
