@@ -54,7 +54,6 @@
 
 /* Card look */
 .entry { border-left: 0; }
-.entry::after { content: ''; display: block; background: var(--card); border: 1px solid #1b222c; border-radius: .75rem; padding: 1rem; margin-top: .25rem; }
 .entry > *:not(.dot):not(header) { position: relative; z-index: 1; }
 .entry header { position: relative; z-index: 1; background: var(--card); border: 1px solid #1b222c; padding: .85rem 1rem; border-radius: .75rem; box-shadow: 0 2px 0 rgba(0,0,0,.2); }
 
