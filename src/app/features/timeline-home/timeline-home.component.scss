@@ -69,7 +69,23 @@
 .timeline .container.rail-ready .rail-progress { min-height: 4px; }
 /* El pseudo-elemento de glow se evita renderizando por *ngIf del container cuando no hay items */
 .timeline .container:not(.has-rail-progress)::before { display: none; }
-.year { position: sticky; left: 0; top: 0; font-weight: 700; color: var(--muted); margin: 2rem 0 .5rem 0; padding-left: 5rem; backdrop-filter: blur(6px); }
+.year {
+	position: sticky;
+	left: 0;
+	top: 0; /* se queda pegado arriba */
+	font-weight: 700;
+	color: var(--fg);
+	margin: 2.5rem 0 1rem 0;
+	padding: .4rem 1rem .45rem 5rem; /* añade fondo detrás del texto */
+	background: rgba(11,13,16,.85); /* var(--bg) con opacidad para contraste */
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	border: 1px solid #1b222c;
+	border-radius: .65rem;
+	box-shadow: 0 4px 12px -4px rgba(0,0,0,.6);
+	z-index: 10; /* por encima de las cards */
+	width: fit-content;
+}
 
 
 .entry { position: relative; margin: 1rem 0 1.5rem 0; padding-left: 5rem; }
@@ -151,5 +167,6 @@
 .rail { left: 1rem; }
 .entry { padding-left: 3.25rem; }
 .dot { left: .6rem; }
-.year { padding-left: 3.25rem; }
+/* Ajuste móvil: reducir padding para mantener alineación */
+.year { padding-left: 3.25rem; padding-right: .75rem; }
 }
