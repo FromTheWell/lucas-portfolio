@@ -6,6 +6,28 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    // Mitigación: algunas extensiones (p. ej., correctores/editores) escuchan focusin a nivel documento
+    // y pueden reventar en inputs concretos. Interceptamos el evento en captura para inputs marcados.
+    (function () {
+      try {
+        var guard = function (e) {
+          var t = e.target;
+          if (!t || !t.matches) return;
+          if (
+            (t.matches('input[type="search"], input[type="text"], textarea')) &&
+            (t.hasAttribute('data-no-ext') || t.getAttribute('data-gramm') === 'false' || t.getAttribute('data-ms-editor') === 'false')
+          ) {
+            // Evita otros handlers en el mismo nodo/fase (incluye content scripts)
+            if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+            else e.stopPropagation();
+          }
+        };
+        document.addEventListener('focusin', guard, true);
+        document.addEventListener('focus', guard, true);
+      } catch (_) { /* no-op */ }
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

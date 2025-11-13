@@ -1,6 +1,6 @@
 import { Component, computed, effect, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren, PLATFORM_ID, inject } from '@angular/core';
 import { TIMELINE } from '../../data/timeline.data';
 import { TimelineItem } from '../../models/timeline';
 
@@ -68,19 +68,30 @@ return entries;
 });
 
 
-// Accessibility: focus ring on keyboard nav only
+// Flag SSR/browser
+private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+// Accessibility: focus ring en navegación con teclado sólo en browser
 constructor() {
-effect(() => {
-const handler = (e: KeyboardEvent) => {
-if (e.key === 'Tab') document.documentElement.classList.add('using-keyboard');
-};
-const mouse = () => document.documentElement.classList.remove('using-keyboard');
-window.addEventListener('keydown', handler);
-window.addEventListener('mousedown', mouse);
-});
+	if (this.isBrowser) {
+		effect(() => {
+			const handler = (e: KeyboardEvent) => {
+				if (e.key === 'Tab') document.documentElement.classList.add('using-keyboard');
+			};
+			const mouse = () => document.documentElement.classList.remove('using-keyboard');
+			window.addEventListener('keydown', handler);
+			window.addEventListener('mousedown', mouse);
+			// Limpieza cuando el efecto se elimina
+			return () => {
+				window.removeEventListener('keydown', handler);
+				window.removeEventListener('mousedown', mouse);
+			};
+		});
+	}
 }
 
 @ViewChild('timelineContainer') private container!: ElementRef<HTMLDivElement>;
+@ViewChild('searchBox') private searchBox!: ElementRef<HTMLInputElement>;
 @ViewChildren('entryEl') private entries!: QueryList<ElementRef<HTMLElement>>;
 
 private activeEntry?: HTMLElement;
@@ -102,7 +113,10 @@ private recalcTimer: any;
 			}
 		});
 
+
 ngAfterViewInit(): void {
+		// En SSR salimos (no hay window ni layout que medir)
+		if (!this.isBrowser) return;
 		// Marca que la vista ya está lista para medir
 		this.viewReady = true;
 		// Recalcula tras el primer render usando rAF para asegurar layout listo
@@ -131,6 +145,25 @@ ngAfterViewInit(): void {
 		}
 
 		// Ya no usamos clases para rail base; *ngIf en template controla visibilidad.
+
+		// Workaround: algunos content scripts (extensiones del navegador) se enganchan al focusin del documento
+		// y petan con campos de tipo search. Capturamos el focusin solo en este input y cortamos propagación
+		// para evitar que llegue al handler global del content script.
+		if (this.isBrowser && this.searchBox?.nativeElement) {
+			const el = this.searchBox.nativeElement;
+			const stopDocFocusHandlers = (e: Event) => { e.stopPropagation(); };
+			el.addEventListener('focusin', stopDocFocusHandlers, true);
+			this.removeListeners.push(() => el.removeEventListener('focusin', stopDocFocusHandlers, true));
+
+			// Al escribir, algunas extensiones escuchan 'input'/'beforeinput' a nivel de document y fallan.
+			// Detenemos el bubbling de estos eventos desde el elemento tras permitir que Angular procese primero.
+			const stopBubble = (e: Event) => { e.stopPropagation(); };
+			['input', 'beforeinput', 'change', 'keydown', 'keyup', 'compositionstart', 'compositionupdate', 'compositionend']
+				.forEach(type => {
+					el.addEventListener(type, stopBubble, false);
+					this.removeListeners.push(() => el.removeEventListener(type, stopBubble, false));
+				});
+		}
 }
 
 ngOnDestroy(): void {
@@ -140,6 +173,7 @@ ngOnDestroy(): void {
 
 // Calcula el inicio y fin de la línea superior que recorre los dots
  private updateRailBounds(): void {
+ if (!this.isBrowser) return;
  const containerEl = this.container?.nativeElement;
  if (!containerEl) return;
 
@@ -191,11 +225,12 @@ if (!firstDot || !lastDot) {
 
 	// Encadena varios frames para asegurar que layout y estilos están listos
 private scheduleRecalc(): void {
+	if (!this.isBrowser) return; // No recalcular en SSR
 	clearTimeout(this.recalcTimer);
 	this.recalcTimer = setTimeout(() => {
-		// Doble frame para asegurar layout estable tras cambios de *ngFor*
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
+		const raf = (typeof requestAnimationFrame === 'function') ? requestAnimationFrame : (fn: FrameRequestCallback) => setTimeout(fn, 16);
+		raf(() => {
+			raf(() => {
 				this.updateRailBounds();
 				this.updateSpotlight();
 			});
@@ -204,7 +239,8 @@ private scheduleRecalc(): void {
 }
 
 // Actualiza la posición del spotlight y el color activo según la tarjeta más centrada
-private updateSpotlight(): void {
+ private updateSpotlight(): void {
+ if (!this.isBrowser) return;
  const containerEl = this.container?.nativeElement;
  if (!containerEl) return;
 
