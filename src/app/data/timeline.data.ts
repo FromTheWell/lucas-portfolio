@@ -32,6 +32,22 @@ links: [
 ]
 },
 {
+id: '2025-webperformancebootcamp',
+kind: 'education',
+title: 'Web Performance Bootcamp: Mastering Speed Techniques',
+org: 'Udemy - Vitor Fonseca',
+start: '2025-04',
+end: '2025-05'
+},
+{
+id: '2019-angularbootcamp',
+kind: 'education',
+title: 'Web Accesibility Course: Intensive Week',
+org: 'Minsait - Internal Training',
+start: '2023-04',
+end: '2023-04'
+},
+{
 id: '2022-angularbootcamp',
 kind: 'education',
 title: 'Angular Avanzado: Lleva tus bases al siguiente nivel - 2022',
