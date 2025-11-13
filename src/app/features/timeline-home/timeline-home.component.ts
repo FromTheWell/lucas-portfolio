@@ -87,6 +87,20 @@ private activeEntry?: HTMLElement;
 private removeListeners: Array<() => void> = [];
 	private viewReady = false;
 private mo?: MutationObserver;
+private recalcTimer: any;
+	// Señal para marcar cuando la rail y spotlight tienen medidas válidas (evita flicker inicial)
+	railReady = signal(false);
+	private prevRailStart = 0;
+	private prevRailEnd = 0;
+	private prevRailLeft = 0;
+		// Effect que reacciona a cambios en items una vez la vista está lista (debe declararse en contexto de inyección)
+		private itemsRecalcEffect = effect(() => {
+			// Se suscribe a items(); sólo recalcula si la vista ya fue inicializada
+			void this.items();
+			if (this.viewReady) {
+				queueMicrotask(() => this.scheduleRecalc());
+			}
+		});
 
 ngAfterViewInit(): void {
 		// Marca que la vista ya está lista para medir
@@ -108,14 +122,7 @@ ngAfterViewInit(): void {
  this.removeListeners.push(() => window.removeEventListener('scroll', onScroll));
  this.removeListeners.push(() => window.removeEventListener('resize', onResize));
  this.removeListeners.push(() => window.removeEventListener('load', onLoad));
-		// Recalcular cuando cambien los items (filtros/búsqueda) una vez la vista existe
-		effect(() => {
-			void this.items(); // suscribirse
-			if (this.viewReady) {
-				// microtask tras render
-				queueMicrotask(() => this.scheduleRecalc());
-			}
-		});
+		// La reacción a cambios de items se maneja por itemsRecalcEffect (arriba)
 
 		// Observa cambios en el DOM del contenedor (por si el *ngFor* regenera nodos)
 		if (this.container?.nativeElement && 'MutationObserver' in window) {
@@ -123,21 +130,7 @@ ngAfterViewInit(): void {
 			this.mo.observe(this.container.nativeElement, { childList: true, subtree: true });
 		}
 
-		// Mostrar/ocultar rail base en función de si hay items lógicos
-		effect(() => {
-			const count = this.items().length;
-			if (!this.viewReady || !this.container?.nativeElement) return;
-			const el = this.container.nativeElement;
-			if (count === 0) {
-				el.classList.add('no-rail');
-				el.classList.remove('has-rail-progress');
-				el.style.removeProperty('--rail-start');
-				el.style.removeProperty('--rail-end');
-				el.style.removeProperty('--rail-left');
-			} else {
-				el.classList.remove('no-rail');
-			}
-		});
+		// Ya no usamos clases para rail base; *ngIf en template controla visibilidad.
 }
 
 ngOnDestroy(): void {
@@ -151,39 +144,25 @@ ngOnDestroy(): void {
  if (!containerEl) return;
 
 	// Fuente de verdad: ¿hay items lógicos tras filtros?
-	const hasLogicalItems = (this.items()?.length ?? 0) > 0;
-	if (!hasLogicalItems) {
-		// Sin items: ocultar todo lo relacionado con rail
-		containerEl.style.removeProperty('--rail-start');
-		containerEl.style.removeProperty('--rail-end');
-		containerEl.style.removeProperty('--rail-left');
-		containerEl.classList.remove('has-rail-progress');
-		containerEl.classList.add('no-rail');
+	if ((this.items()?.length ?? 0) === 0) {
+		// container no existe (ngIf), no limpiar para evitar flash en futuro render
+		this.railReady.set(false);
 		return;
 	}
-	// Hay items: aseguramos mostrar rail base
-	containerEl.classList.remove('no-rail');
 
  const entryEls = this.entries?.toArray().map(r => r.nativeElement).filter(el => el.offsetParent !== null) ?? [];
- if (!entryEls.length) {
- containerEl.style.removeProperty('--rail-start');
- containerEl.style.removeProperty('--rail-end');
-		containerEl.style.removeProperty('--rail-left');
-			containerEl.classList.remove('has-rail-progress');
-		// No añadimos no-rail porque sí existen items; solo aún no están medibles
- return;
- }
+if (!entryEls.length) {
+	// Reintentar en próximo frame si aún no están listos
+	requestAnimationFrame(() => this.updateRailBounds());
+	return; // no forzar limpiezas ni apagar efectos previos
+}
 
  const firstDot = entryEls[0].querySelector('.dot') as HTMLElement | null;
  const lastDot = entryEls[entryEls.length - 1].querySelector('.dot') as HTMLElement | null;
- if (!firstDot || !lastDot) {
-	 containerEl.style.removeProperty('--rail-start');
-	 containerEl.style.removeProperty('--rail-end');
-	 containerEl.style.removeProperty('--rail-left');
-	 containerEl.classList.remove('has-rail-progress');
-	 // No añadimos no-rail porque sí hay items
- 	 return;
- }
+if (!firstDot || !lastDot) {
+	requestAnimationFrame(() => this.updateRailBounds());
+	return;
+}
 
  const cRect = containerEl.getBoundingClientRect();
  const fRect = firstDot.getBoundingClientRect();
@@ -198,32 +177,31 @@ ngOnDestroy(): void {
 		// Altura mínima para que sea visible incluso con 1 dot
 		if (e - s < 2) e = s + 2;
 		// Evita alturas negativas o NaN y asegura que se establecen correctamente
-		if (isFinite(s) && isFinite(e) && e >= s) {
-			containerEl.style.setProperty('--rail-start', `${s}px`);
-			containerEl.style.setProperty('--rail-end', `${e}px`);
-        containerEl.classList.add('has-rail-progress');
-        containerEl.classList.remove('no-rail');
-		}
+	if (isFinite(s) && isFinite(e) && e >= s) {
+		containerEl.style.setProperty('--rail-start', `${s}px`);
+		containerEl.style.setProperty('--rail-end', `${e}px`);
+		this.prevRailStart = s;
+		this.prevRailEnd = e;
+	}
 	containerEl.style.setProperty('--rail-left', `${railLeft}px`);
+	this.prevRailLeft = railLeft;
+	// Medidas válidas -> activar efectos visuales
+	this.railReady.set(true);
 }
 
 	// Encadena varios frames para asegurar que layout y estilos están listos
-	private scheduleRecalc(): void {
+private scheduleRecalc(): void {
+	clearTimeout(this.recalcTimer);
+	this.recalcTimer = setTimeout(() => {
+		// Doble frame para asegurar layout estable tras cambios de *ngFor*
 		requestAnimationFrame(() => {
-			this.updateRailBounds();
-			this.updateSpotlight();
-			// Segundo frame por si hay fuentes/scrollbar que cambian medidas
 			requestAnimationFrame(() => {
 				this.updateRailBounds();
 				this.updateSpotlight();
-				// Tercer intento tardío para estados intermedios de DOM/pintado
-				setTimeout(() => {
-					this.updateRailBounds();
-					this.updateSpotlight();
-				}, 60);
 			});
 		});
-	}
+	}, 30);
+}
 
 // Actualiza la posición del spotlight y el color activo según la tarjeta más centrada
 private updateSpotlight(): void {

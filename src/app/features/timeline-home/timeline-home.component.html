@@ -25,11 +25,10 @@ role="tab" [attr.aria-selected]="kind()===k">{{ k }}</button>
 
 
 <section class="timeline">
-<div class="container" #timelineContainer>
+<!-- Contenedor con rail y entries solo si hay items -->
+<div class="container" #timelineContainer *ngIf="items().length > 0" [class.rail-ready]="railReady()">
 <div class="rail" aria-hidden="true"></div>
-<!-- Línea superior que recorre los dots (del primero al último) -->
 <div class="rail-progress" aria-hidden="true"></div>
-
 
 <ng-container *ngFor="let grp of groups()">
 <div class="year" [attr.aria-label]="'Año ' + grp[0]">{{ grp[0] }}</div>
@@ -61,6 +60,12 @@ role="tab" [attr.aria-selected]="kind()===k">{{ k }}</button>
 <a *ngFor="let l of it.links" [href]="l.url" target="_blank" rel="noopener noreferrer">{{ l.label }}</a>
 </nav>
 </article>
-</ng-container>
+ </ng-container>
+</div>
+
+<!-- Empty state fuera del contenedor con pseudo-elements -->
+<div *ngIf="items().length === 0" class="empty-state" role="status" aria-live="polite">
+	<h3>No se ha encontrado nada, todavía…</h3>
+	<p>Prueba a cambiar el texto de búsqueda o seleccionar otro tipo.</p>
 </div>
 </section>

@@ -37,23 +37,38 @@
 	--spot-strong: rgba(122,162,247,.35);
 }
 
+/* Empty state card */
+.empty-state {
+	max-width: 640px;
+	margin: 2rem auto 4rem;
+	background: var(--card);
+	border: 1px solid #1b222c;
+	padding: 1.5rem 1.75rem;
+	border-radius: .9rem;
+	text-align: center;
+	color: var(--muted);
+	box-shadow: 0 2px 0 rgba(0,0,0,.25);
+	animation: rise .5s ease forwards;
+}
+.empty-state h3 { margin: 0 0 .5rem; font-size: 1.15rem; color: var(--fg); }
+.empty-state p { margin: 0; font-size: .95rem; }
+
 
 .rail { position: absolute; left: 2rem; top: 0; bottom: 0; width: 3px; background: var(--rail); border-radius: 2px; z-index: 1; }
-.timeline .container.no-rail .rail { display: none; }
 /* Línea que pasa sobre los dots (entre el primero y el último) */
 .rail-progress {
 	position: absolute; left: var(--rail-left, 2rem);
-	top: var(--rail-start); height: max(0px, calc(var(--rail-end) - var(--rail-start))); width: 2px;
+	top: var(--rail-start); height: calc(var(--rail-end) - var(--rail-start)); width: 2px;
 	background: linear-gradient(to bottom, rgba(122,162,247,.15), rgba(122,162,247,.35));
 	box-shadow: 0 0 10px var(--spot-color), 0 0 20px var(--spot-color);
 	border-radius: 2px; z-index: 3; /* por encima de la rail y los dots para "pasar sobre" */
 	mix-blend-mode: screen;
-	transition: top .35s ease, height .35s ease, left .35s ease;
-	opacity: 0;
+	opacity: 0; /* oculto hasta tener medidas válidas */
 }
-.timeline .container.has-rail-progress .rail-progress { opacity: 1; display: block; }
-.timeline .container:not(.has-rail-progress) .rail-progress { display: none; }
-.timeline .container:not(.has-rail-progress)::after { display: none; }
+.timeline .container.rail-ready .rail-progress { opacity: 1; }
+.timeline .container.rail-ready .rail-progress { min-height: 4px; }
+/* El pseudo-elemento de glow se evita renderizando por *ngIf del container cuando no hay items */
+.timeline .container:not(.has-rail-progress)::before { display: none; }
 .year { position: sticky; left: 0; top: 0; font-weight: 700; color: var(--muted); margin: 2rem 0 .5rem 0; padding-left: 5rem; backdrop-filter: blur(6px); }
 
 
@@ -113,13 +128,13 @@
 .entry:nth-child(3) { animation-delay: .1s; }
 
 /* Spotlight dinámico que ilumina el fondo en la zona del scroll */
-.timeline .container::before {
+.timeline .container.rail-ready::before {
 	content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
 	background: radial-gradient(600px 220px at 55% var(--spot-y), var(--spot-color), transparent 60%);
 }
 
 /* Resaltado a lo largo de la guía (rail) en la posición del foco */
-.timeline .container::after {
+.timeline .container.rail-ready::after {
 	content: ""; position: absolute; left: calc(var(--rail-left, 2rem) - 9px); right: auto; width: 18px; top: 0; bottom: 0; pointer-events: none; z-index: 2;
 	background: linear-gradient(to bottom,
 		transparent calc(var(--spot-y) - 140px),
@@ -129,8 +144,6 @@
 	);
 	filter: blur(12px);
 }
-.timeline .container.no-rail::after { display: none; }
-.timeline .container.no-rail::before { display: none; }
 
 
 /* Responsive */
