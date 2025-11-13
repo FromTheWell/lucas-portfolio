@@ -32,6 +32,14 @@ links: [
 ]
 },
 {
+id: '2022-angularbootcamp',
+kind: 'education',
+title: 'Angular Avanzado: Lleva tus bases al siguiente nivel - 2022',
+org: 'Udemy - Fernando Herrera',
+start: '2022-09',
+end: '2022-10'
+},
+{
 id: '2024-jccm',
 kind: 'job',
 title: 'Frontend Consultant (Angular)',
@@ -45,12 +53,28 @@ links: [
 ]
 },
 {
+id: '2019-springboot',
+kind: 'education',
+title: 'Spring Boot 3, Spring 6 & Hibernate for Beginners',
+org: 'Udemy - Chad Darby',
+start: '2019-11',
+end: '2019-12'
+},
+{
+id: '2019-angularbootcamp',
+kind: 'education',
+title: 'Angular: De cero a experto - 2018',
+org: 'Udemy - Fernando Herrera',
+start: '2019-09',
+end: '2019-10'
+},
+{
 id: '2019-future',
 kind: 'job',
 title: 'Frontend Engineer (Angular)',
 org: 'Future Space',
 description: '• Contributed to SmartGraph, a graph-based data analytics platform for detecting insurance fraud. • Developed microservices with Spring Boot (Java) and Front-End with Angular focused on complex data visualization. • Enhanced system performance, scalability, and accessibility.',
-tech: ['Angular', 'Nx', 'Jenkins', 'Storybook'],
+tech: ['Angular', 'Spring Boot', 'Java',  'Nx', 'Jenkins', 'Storybook'],
 start: '2019-09',
 end: '2021-11',
 links: [
