@@ -25,15 +25,17 @@ role="tab" [attr.aria-selected]="kind()===k">{{ k }}</button>
 
 
 <section class="timeline">
-<div class="container">
+<div class="container" #timelineContainer>
 <div class="rail" aria-hidden="true"></div>
+<!-- Línea superior que recorre los dots (del primero al último) -->
+<div class="rail-progress" aria-hidden="true"></div>
 
 
 <ng-container *ngFor="let grp of groups()">
 <div class="year" [attr.aria-label]="'Año ' + grp[0]">{{ grp[0] }}</div>
 
 
-<article class="entry" *ngFor="let it of grp[1]" tabindex="0" [attr.data-kind]="it.kind">
+<article class="entry" *ngFor="let it of grp[1]" #entryEl tabindex="0" [attr.data-kind]="it.kind">
 <div class="dot" aria-hidden="true"></div>
 <header>
 <h3>
