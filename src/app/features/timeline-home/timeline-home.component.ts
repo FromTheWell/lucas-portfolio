@@ -30,6 +30,11 @@ kinds = ['all', 'job', 'project', 'education', 'award', 'talk', 'oss'] as const;
 kind = signal<(typeof this.kinds)[number]>('all');
 search = signal('');
 
+readonly kindLabels: Record<string, string> = {
+  all: 'Todos', job: 'Trabajo', project: 'Proyectos',
+  education: 'Educación', award: 'Premios', talk: 'Charlas', oss: 'Open Source'
+};
+
 
 // Derived (group by year)
 items = computed(() => {
@@ -273,6 +278,14 @@ private scheduleRecalc(): void {
  const [r, g, b] = this.hexToRgb(hex);
  containerEl.style.setProperty('--spot-color', `rgba(${r}, ${g}, ${b}, 0.18)`);
  containerEl.style.setProperty('--spot-strong', `rgba(${r}, ${g}, ${b}, 0.35)`);
+}
+
+clearSearch(): void {
+  this.search.set('');
+  if (this.searchBox?.nativeElement) {
+    this.searchBox.nativeElement.value = '';
+    this.searchBox.nativeElement.focus();
+  }
 }
 
 private kindToHex(kind: string): string {
