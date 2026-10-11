@@ -1,9 +1,9 @@
-:root { --bg: #0b0d10; --fg: #e6edf3; --muted: #9aa4af; --card: #12161b; --rail: #1f2833; --accent: #7aa2f7; }
-:root.using-keyboard *:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 
 /* ── Hero ─────────────────────────────────────────────── */
-.hero { background: radial-gradient(1200px 600px at 10% -10%, rgba(122,162,247,.15), transparent), var(--bg); color: var(--fg); }
+/* Glow lives on the host so it fades continuously across hero and timeline (no seam) */
+:host { display: block; background: radial-gradient(1200px 600px at 10% -40px, rgba(122,162,247,.15), transparent) no-repeat, var(--bg); }
+.hero { color: var(--fg); }
 .hero .container { max-width: 920px; margin: 0 auto; padding: 5rem 4rem 2.5rem; }
 .hero h1 { font-size: clamp(2rem, 1rem + 3vw, 3.25rem); margin: 0 0 .25rem; letter-spacing: -.03em; line-height: 1.1; }
 .hero .subtitle { margin: 0 0 1.25rem; color: var(--muted); font-size: 1rem; }
@@ -62,7 +62,7 @@
 
 
 /* ── Timeline ───────────────────────────────────────── */
-.timeline { background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 20%), var(--bg); color: var(--fg); }
+.timeline { color: var(--fg); }
 .timeline .container {
   max-width: 920px; margin: 0 auto; padding: 2rem 1rem 6rem; position: relative;
   --rail-start: 0px;
@@ -87,14 +87,14 @@
 
 
 /* ── Rail ───────────────────────────────────────────── */
-.rail { position: absolute; left: 2rem; top: 0; bottom: 0; width: 3px; background: var(--rail); border-radius: 2px; z-index: 1; }
 .rail-progress {
-  position: absolute; left: var(--rail-left, 2rem);
+  /* Centered on the dots: --rail-left is the dot center, so shift by half the width */
+  position: absolute; left: calc(var(--rail-left, 2rem) - 1px);
   top: var(--rail-start); height: calc(var(--rail-end) - var(--rail-start)); width: 2px;
-  background: linear-gradient(to bottom, rgba(122,162,247,.15), rgba(122,162,247,.35));
+  background: linear-gradient(to bottom, rgba(122,162,247,.55), rgba(122,162,247,.8));
   box-shadow: 0 0 10px var(--spot-color), 0 0 20px var(--spot-color);
+  /* Layering: shadow (::after, z 2) < rail (z 3) < entries/dots (z 4) */
   border-radius: 2px; z-index: 3;
-  mix-blend-mode: screen;
   opacity: 0;
 }
 .timeline .container.rail-ready .rail-progress { opacity: 1; min-height: 4px; }
@@ -116,7 +116,7 @@
 
 
 /* ── Entry card ─────────────────────────────────────── */
-.entry { position: relative; margin: 1rem 0 1.5rem 0; padding-left: 5rem; }
+.entry { position: relative; z-index: 4; margin: 1rem 0 1.5rem 0; padding-left: 5rem; }
 .dot {
   position: absolute; left: 1.75rem; top: .75rem;
   width: .85rem; height: .85rem; border-radius: 50%;
@@ -229,7 +229,6 @@
 @media (max-width: 680px) {
   .hero .container { padding: 3rem 1.25rem 1.5rem; }
   .hero h1 { font-size: clamp(1.75rem, 8vw, 2.5rem); }
-  .rail { left: 1rem; }
   .entry { padding-left: 3.25rem; }
   .dot { left: .6rem; }
   .year { padding-left: .75rem; padding-right: .75rem; }

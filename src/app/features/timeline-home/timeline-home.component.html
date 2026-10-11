@@ -36,7 +36,7 @@
     </div>
     <div class="chips-row">
       <div class="chips" role="tablist" aria-label="Filtro por tipo">
-        <button *ngFor="let k of kinds"
+        <button *ngFor="let k of visibleKinds"
           class="chip"
           [attr.data-kind]="k"
           [class.active]="kind()===k"
@@ -55,7 +55,6 @@
 <section class="timeline">
 <!-- Contenedor con rail y entries solo si hay items -->
 <div class="container" #timelineContainer *ngIf="items().length > 0" [class.rail-ready]="railReady()">
-  <div class="rail" aria-hidden="true"></div>
   <div class="rail-progress" aria-hidden="true"></div>
 
   <ng-container *ngFor="let grp of groups()">

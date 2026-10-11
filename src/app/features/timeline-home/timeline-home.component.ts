@@ -2,7 +2,7 @@ import { Component, computed, effect, signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, ElementRef, OnDestroy, QueryList, ViewChild, ViewChildren, PLATFORM_ID, inject } from '@angular/core';
 import { TIMELINE } from '../../data/timeline.data';
-import { TimelineItem } from '../../models/timeline';
+import { TimelineItem, TimelineKind } from '../../models/timeline';
 
 
 // Helper: year string from ISO or 'present'
@@ -27,7 +27,19 @@ private all = signal<TimelineItem[]>([...TIMELINE]);
 
 // Filters
 kinds = ['all', 'job', 'project', 'education', 'award', 'talk', 'oss'] as const;
-kind = signal<(typeof this.kinds)[number]>('all');
+
+// Chip visibility toggle (code-only): set to false to hide a category's filter chip
+private readonly kindVisibility: Record<TimelineKind, boolean> = {
+  job: true,
+  project: true,
+  education: true,
+  award: false,
+  talk: false,
+  oss: false,
+};
+readonly visibleKinds = this.kinds.filter(k => k === 'all' || this.kindVisibility[k]);
+
+kind = signal<(typeof this.kinds)[number]>('job');
 search = signal('');
 
 readonly kindLabels: Record<string, string> = {
@@ -203,13 +215,12 @@ if (!firstDot || !lastDot) {
 	return;
 }
 
- const cRect = containerEl.getBoundingClientRect();
- const fRect = firstDot.getBoundingClientRect();
- const lRect = lastDot.getBoundingClientRect();
+ const first = this.dotCenter(entryEls[0], firstDot);
+ const last = this.dotCenter(entryEls[entryEls.length - 1], lastDot);
 
- const start = (fRect.top - cRect.top) + (fRect.height / 2);
- const end = (lRect.top - cRect.top) + (lRect.height / 2);
-	const railLeft = (fRect.left - cRect.left) + (fRect.width / 2);
+ const start = first.y;
+ const end = last.y;
+	const railLeft = first.x;
 
 		let s = Math.max(0, Math.min(start, end));
 		let e = Math.max(start, end);
@@ -249,9 +260,10 @@ private scheduleRecalc(): void {
  const containerEl = this.container?.nativeElement;
  if (!containerEl) return;
 
- const cRect = containerEl.getBoundingClientRect();
  const viewportCenterY = window.innerHeight / 2;
- const spotY = viewportCenterY - cRect.top; // relativo al contenedor
+ // El spotlight sigue el scroll (centro de la ventana), limitado al tramo de la rail (primer → último dot)
+ const cRect = containerEl.getBoundingClientRect();
+ const spotY = Math.min(Math.max(viewportCenterY - cRect.top, this.prevRailStart), this.prevRailEnd || Infinity);
  containerEl.style.setProperty('--spot-y', `${spotY}px`);
 
  const entryEls = this.entries?.toArray().map(r => r.nativeElement).filter(el => el.offsetParent !== null) ?? [];
@@ -278,6 +290,15 @@ private scheduleRecalc(): void {
  const [r, g, b] = this.hexToRgb(hex);
  containerEl.style.setProperty('--spot-color', `rgba(${r}, ${g}, ${b}, 0.18)`);
  containerEl.style.setProperty('--spot-strong', `rgba(${r}, ${g}, ${b}, 0.35)`);
+}
+
+// Centro del dot relativo al contenedor. Usa offsets (layout) en lugar de getBoundingClientRect
+// para que la animación "rise" (transform) de las tarjetas no desplace la medida.
+private dotCenter(entry: HTMLElement, dot: HTMLElement): { x: number; y: number } {
+ return {
+ x: entry.offsetLeft + dot.offsetLeft + dot.offsetWidth / 2,
+ y: entry.offsetTop + dot.offsetTop + dot.offsetHeight / 2,
+ };
 }
 
 clearSearch(): void {
