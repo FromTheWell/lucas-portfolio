@@ -1,0 +1,30 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="copy">
+    <h1 id="hero-title"><span>Frontend</span> <span>Developer</span></h1>
+    <p class="intro">
+      I'm Lucas, a <strong>web developer</strong> with a passion for building fast,
+      accessible and beautifully crafted web applications with Angular, and the APIs behind them.
+    </p>
+
+    <div class="actions">
+      <a class="btn-glow" routerLink="/" fragment="portfolio">View my work</a>
+      <nav class="socials" aria-label="Social media">
+        @for (s of profile.socials; track s.id) {
+          <a [href]="s.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="s.label">
+            <lucide-icon [img]="icons[s.id]" [size]="18"></lucide-icon>
+          </a>
+        }
+        <a [href]="'mailto:' + profile.email" aria-label="Email">
+          <lucide-icon [img]="icons['mail']" [size]="18"></lucide-icon>
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="visual" aria-hidden="true">
+    @for (s of snippets; track s.text) {
+      <code class="snippet" [style.left.%]="s.x" [style.top.%]="s.y">{{ s.text }}</code>
+    }
+    <img [src]="profile.photo" [alt]="profile.name" width="691" height="880" fetchpriority="high" />
+  </div>
+</section>

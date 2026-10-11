@@ -1,0 +1,29 @@
+<section class="section" id="portfolio" aria-labelledby="portfolio-title">
+  <h2 class="section-title" id="portfolio-title">Portfolio</h2>
+
+  <ul class="grid">
+    @for (p of items; track p.url) {
+      <li>
+        <a class="card" [href]="p.url" target="_blank" rel="noopener noreferrer">
+          <div class="preview">
+            @if (p.preview) {
+              <img [src]="p.preview" [alt]="'Preview of ' + p.label" width="640" height="400" loading="lazy" />
+            } @else {
+              <div class="placeholder" aria-hidden="true">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <strong>{{ p.label }}</strong>
+                <small>{{ p.host }}</small>
+              </div>
+            }
+          </div>
+          <div class="body">
+            <lucide-icon class="ext" [img]="ArrowUpRight" [size]="18" aria-hidden="true"></lucide-icon>
+            <h3>{{ p.label }}</h3>
+            <p>{{ p.org }}</p>
+            <ul class="tech">@for (t of p.tech; track t) { <li>{{ t }}</li> }</ul>
+          </div>
+        </a>
+      </li>
+    }
+  </ul>
+</section>

@@ -1,0 +1,36 @@
+:host { display: block; border-bottom: 1px solid var(--line); }
+
+// Zig-zag cards joined by a vertical connector
+.flow { position: relative; display: grid; gap: 2.5rem; }
+.flow::before {
+  content: ''; position: absolute; left: 50%; top: 2rem; bottom: 2rem; width: 1px;
+  background: linear-gradient(to bottom, transparent, #2d3847 15%, #2d3847 85%, transparent);
+}
+
+.card {
+  position: relative; width: min(100%, 520px);
+  padding: 1.5rem 1.75rem;
+  background: rgba(18, 22, 27, .75); border: 1px solid var(--line); border-radius: .9rem;
+  transition: border-color .25s ease, transform .25s ease;
+  &:hover { border-color: rgba(139, 108, 246, .45); transform: translateY(-3px); }
+  &:nth-child(even) { justify-self: end; }
+}
+
+h3 {
+  display: flex; align-items: center; gap: .75rem;
+  margin: 0 0 .75rem; font-size: 1.35rem; font-weight: 500;
+  lucide-icon { color: var(--accent); }
+}
+
+p { margin: 0 0 1rem; color: #c9d1d9; font-size: .92rem; line-height: 1.6; }
+
+ul { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+li {
+  font-size: .72rem; letter-spacing: .04em; color: var(--muted);
+  padding: .2rem .6rem; border: 1px solid var(--line); border-radius: 999px;
+}
+
+@media (max-width: 760px) {
+  .flow::before { display: none; }
+  .card:nth-child(even) { justify-self: stretch; }
+}

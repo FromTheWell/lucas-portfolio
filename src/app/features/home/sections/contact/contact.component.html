@@ -1,0 +1,58 @@
+<section class="section" id="contact" aria-labelledby="contact-title">
+  <div class="info">
+    <h2 class="section-title" id="contact-title">Do you have a project to discuss?</h2>
+    <p class="cta">Get in touch <lucide-icon [img]="icons['chat']" [size]="20"></lucide-icon></p>
+
+    <div class="channels">
+      <div>
+        <h3>Contact</h3>
+        <a class="email" [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+      </div>
+      <div>
+        <h3>Social media</h3>
+        <nav class="socials" aria-label="Social media">
+          @for (s of profile.socials; track s.id) {
+            <a [href]="s.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="s.label">
+              <lucide-icon [img]="icons[s.id]" [size]="18"></lucide-icon>
+            </a>
+          }
+          <a [href]="'mailto:' + profile.email" aria-label="Email">
+            <lucide-icon [img]="icons['mail']" [size]="18"></lucide-icon>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <h3>Contact form</h3>
+
+    <label for="cf-name">Name</label>
+    <input id="cf-name" formControlName="name" autocomplete="name" data-gramm="false" data-ms-editor="false" data-no-ext="true"
+      [attr.aria-invalid]="invalid('name')" />
+    @if (invalid('name')) { <small class="error">Please tell me your name.</small> }
+
+    <label for="cf-email">Email</label>
+    <input id="cf-email" type="email" formControlName="email" autocomplete="email" data-gramm="false" data-ms-editor="false" data-no-ext="true"
+      [attr.aria-invalid]="invalid('email')" />
+    @if (invalid('email')) { <small class="error">Please enter a valid email.</small> }
+
+    <label for="cf-message">Message</label>
+    <textarea id="cf-message" rows="5" formControlName="message" data-gramm="false" data-ms-editor="false" data-no-ext="true"
+      [attr.aria-invalid]="invalid('message')"></textarea>
+    @if (invalid('message')) { <small class="error">Your message should be at least 10 characters.</small> }
+
+    <div class="submit-row">
+      <button class="btn-glow" type="submit" [disabled]="status() === 'sending'">
+        {{ status() === 'sending' ? 'Sending…' : 'Send' }}
+        <lucide-icon [img]="icons['send']" [size]="14"></lucide-icon>
+      </button>
+      <p class="status" role="status" aria-live="polite">
+        @switch (status()) {
+          @case ('sent') { Thanks! I'll get back to you soon. }
+          @case ('error') { Something went wrong, please write to me by email. }
+        }
+      </p>
+    </div>
+  </form>
+</section>

@@ -1,5 +1,38 @@
 html, body { height: 100%; }
+html { scroll-behavior: smooth; }
 body { margin: 0; background: #0b0d10; color: #e6edf3; font: 16px/1.6 system-ui, Segoe UI, Roboto, sans-serif; }
 * { box-sizing: border-box; }
-:root { --bg: #0b0d10; --fg: #e6edf3; --muted: #9aa4af; --card: #12161b; --rail: #1f2833; --accent: #7aa2f7; }
+:root {
+  --bg: #0b0d10; --fg: #e6edf3; --muted: #9aa4af; --card: #12161b; --rail: #1f2833; --accent: #7aa2f7;
+  --line: #1b222c;
+  --pink: #f0509a; --violet: #8b6cf6;
+  --grad: linear-gradient(90deg, var(--pink), var(--violet) 55%, var(--accent));
+  --font-display: 'Manrope', system-ui, Segoe UI, Roboto, sans-serif;
+}
 :root.using-keyboard *:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+// ── Landing page shared pieces ──────────────────────────
+.section {
+  max-width: 1080px; margin: 0 auto; padding: 5.5rem 1.25rem;
+  font-family: var(--font-display);
+}
+.section-title {
+  margin: 0 0 3rem; width: fit-content;
+  font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.25rem); font-weight: 500;
+  letter-spacing: .02em; text-transform: uppercase; line-height: 1.15;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.btn-glow {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .75rem 1.6rem; border-radius: .7rem; cursor: pointer;
+  font: 700 .75rem/1 var(--font-display); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--fg); text-decoration: none; background: rgba(11, 13, 16, .6);
+  border: 1.5px solid transparent;
+  background-image: linear-gradient(var(--bg), var(--bg)), linear-gradient(90deg, #22d3ee, var(--violet), var(--pink));
+  background-origin: border-box; background-clip: padding-box, border-box;
+  box-shadow: -6px 4px 22px -6px rgba(34, 211, 238, .55), 6px 4px 22px -6px rgba(240, 80, 154, .55);
+  transition: transform .2s ease, box-shadow .2s ease;
+  &:hover { transform: translateY(-2px); box-shadow: -8px 6px 28px -6px rgba(34, 211, 238, .75), 8px 6px 28px -6px rgba(240, 80, 154, .75); }
+  &:disabled { opacity: .6; cursor: progress; transform: none; }
+}

@@ -1,0 +1,18 @@
+<header class="bar" [class.open]="open()">
+  <a class="brand" routerLink="/" (click)="open.set(false)">{{ name }}</a>
+
+  <button class="toggle" type="button" (click)="open.set(!open())"
+    [attr.aria-expanded]="open()" aria-controls="site-nav" aria-label="Menu">
+    <lucide-icon [img]="open() ? icons.X : icons.Menu" [size]="20"></lucide-icon>
+  </button>
+
+  <nav id="site-nav" aria-label="Main">
+    @for (s of sections; track s.id) {
+      <a routerLink="/" [fragment]="s.id" (click)="open.set(false)">{{ s.label }}</a>
+    }
+    <a class="timeline-link" routerLink="/timeline" routerLinkActive="active" (click)="open.set(false)">
+      <lucide-icon [img]="icons.History" [size]="15"></lucide-icon>
+      Timeline
+    </a>
+  </nav>
+</header>
