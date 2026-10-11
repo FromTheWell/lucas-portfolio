@@ -2,6 +2,21 @@ import { TimelineItem } from '../models/timeline';
 
 
 export const TIMELINE: TimelineItem[] = [
+
+{
+id: '2026-BetweenTech',
+kind: 'job',
+title: 'FullStack Developer (Angular/SpringBoot)',
+org: 'BetweenTechnology',
+description: 'Frontend in Angular 20, applying the framework\'s latest capabilities (signals, standalone components, new control flow) to a data-dense management application. Backend in Spring Boot 3: REST endpoints and business logic for the unit lifecycle management domain. End-to-end ownership of the same functional domain, defining the API contract from both sides.',
+tech: ['Angular 20', 'Javascript', 'Java', 'MySQL', 'Ngrx', 'SpringBoot'],
+start: '2026-02',
+end: '2026-06',
+highlight: true,
+links: [
+{ label: 'LeadMind', url: 'https://www.cafmobility.com/soluciones/servicios/' },
+]
+},
   {
 id: '2025-workout-app',
 kind: 'project',
