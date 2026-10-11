@@ -263,18 +263,40 @@ private scheduleRecalc(): void {
  const viewportCenterY = window.innerHeight / 2;
  // El spotlight sigue el scroll (centro de la ventana), limitado al tramo de la rail (primer → último dot)
  const cRect = containerEl.getBoundingClientRect();
- const spotY = Math.min(Math.max(viewportCenterY - cRect.top, this.prevRailStart), this.prevRailEnd || Infinity);
+ // En el último medio viewport de scroll la línea de referencia baja hasta el último dot,
+ // para que al llegar al final de la página el spotlight acabe exactamente en él
+ const remaining = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+ const t = Math.min(1, Math.max(0, 1 - remaining / viewportCenterY));
+ const lastDotV = cRect.top + this.prevRailEnd;
+ const lineY = viewportCenterY + t * Math.max(0, lastDotV - viewportCenterY);
+ const spotY = Math.min(Math.max(lineY - cRect.top, this.prevRailStart), this.prevRailEnd || Infinity);
  containerEl.style.setProperty('--spot-y', `${spotY}px`);
 
  const entryEls = this.entries?.toArray().map(r => r.nativeElement).filter(el => el.offsetParent !== null) ?? [];
  if (!entryEls.length) return;
 
- // Encuentra la más cercana al centro de la ventana
+ // Extremos: cerca del primer/último dot la sombra de la rail se encoge y se desvanece,
+ // y el propio dot toma el relevo con su glow (transición continua ligada al scroll)
+ const distStart = spotY - this.prevRailStart;
+ const distEnd = this.prevRailEnd - spotY;
+ const edge = Math.max(0, Math.min(distStart, distEnd));
+ containerEl.style.setProperty('--spot-half', `${Math.min(140, edge)}px`);
+ containerEl.style.setProperty('--band-op', `${Math.min(1, edge / 60)}`);
+ // Cada dot brilla según su cercanía al spotlight (0 lejos → 1 justo encima)
+ for (const el of entryEls) {
+ const dot = el.querySelector('.dot') as HTMLElement | null;
+ if (!dot) continue;
+ const glow = Math.max(0, 1 - Math.abs(spotY - this.dotCenter(el, dot).y) / 80);
+ if (glow > 0) el.style.setProperty('--edge-glow', glow.toFixed(3));
+ else el.style.removeProperty('--edge-glow');
+ }
+
+ // Tarjeta activa = la de dot más cercano al spotlight (así coincide con el dot que brilla)
  let best: { el: HTMLElement; dist: number } | null = null;
  for (const el of entryEls) {
- const r = el.getBoundingClientRect();
- const center = (r.top + r.bottom) / 2;
- const dist = Math.abs(center - viewportCenterY);
+ const dot = el.querySelector('.dot') as HTMLElement | null;
+ if (!dot) continue;
+ const dist = Math.abs(this.dotCenter(el, dot).y - spotY);
  if (!best || dist < best.dist) best = { el, dist };
  }
  if (!best) return;

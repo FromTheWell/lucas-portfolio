@@ -121,7 +121,9 @@
   position: absolute; left: 1.75rem; top: .75rem;
   width: .85rem; height: .85rem; border-radius: 50%;
   background: var(--dot-color, var(--accent));
-  box-shadow: 0 0 0 4px var(--dot-ring, rgba(122,162,247,.15));
+  /* Second shadow = dot glow, driven by --edge-glow (0..1) as the spotlight passes over the dot */
+  box-shadow: 0 0 0 4px var(--dot-ring, rgba(122,162,247,.15)),
+              0 0 calc(var(--edge-glow, 0) * 22px) calc(var(--edge-glow, 0) * 6px) var(--shadow-line, rgba(122,162,247,.45));
   transition: box-shadow .25s ease, background-color .25s ease; z-index: 2;
 }
 
@@ -213,15 +215,22 @@
   content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background: radial-gradient(600px 220px at 55% var(--spot-y), var(--spot-color), transparent 60%);
 }
+/* Rail shadow: lives only between first and last dot (box = rail span, clip-path cuts the blur vertically).
+   --spot-half / --band-op shrink to 0 as the spot reaches an end dot, where the dot glow (--edge-glow) takes over. */
 .timeline .container.rail-ready::after {
-  content: ""; position: absolute; left: calc(var(--rail-left, 2rem) - 9px); right: auto; width: 18px; top: 0; bottom: 0; pointer-events: none; z-index: 2;
+  --spot-rel: calc(var(--spot-y) - var(--rail-start));
+  content: ""; position: absolute; left: calc(var(--rail-left, 2rem) - 9px); right: auto; width: 18px;
+  top: var(--rail-start); height: calc(var(--rail-end) - var(--rail-start));
+  pointer-events: none; z-index: 2;
   background: linear-gradient(to bottom,
-    transparent calc(var(--spot-y) - 140px),
-    var(--spot-strong) calc(var(--spot-y) - 2px),
-    var(--spot-strong) calc(var(--spot-y) + 2px),
-    transparent calc(var(--spot-y) + 140px)
+    transparent calc(var(--spot-rel) - var(--spot-half, 140px)),
+    var(--spot-strong) calc(var(--spot-rel) - 2px),
+    var(--spot-strong) calc(var(--spot-rel) + 2px),
+    transparent calc(var(--spot-rel) + var(--spot-half, 140px))
   );
   filter: blur(12px);
+  clip-path: inset(0 -40px);
+  opacity: var(--band-op, 1);
 }
 
 
