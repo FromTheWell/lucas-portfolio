@@ -9,7 +9,7 @@ export const PROFILE = {
   photo: 'images/lucas.webp',
   socials: [
     { id: 'github', label: 'GitHub', url: 'https://github.com/FromTheWell' },
-    { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/lucas-del-pozo' },
+    { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/carlos-lucas-del-pozo-dom%C3%ADnguez-47aa96183/' },
   ],
 } as const;
 
@@ -88,6 +88,7 @@ export interface PortfolioItem {
 
 // Screenshots in /public/images/portfolio, keyed by link URL. Links without one show a placeholder.
 const PREVIEWS: Record<string, string> = {
+  'https://www.cafmobility.com/soluciones/servicios/': 'between-caf',
   'https://www.tribunavalladolid.com/': 'tribuna',
   'https://hub.isquad.es/': 'isquad',
   'https://www.jccm.es/': 'jccm',
