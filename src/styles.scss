@@ -8,7 +8,9 @@ body { margin: 0; background: #0b0d10; color: #e6edf3; font: 16px/1.6 system-ui,
   --pink: #f0509a; --violet: #8b6cf6;
   --grad: linear-gradient(90deg, var(--pink), var(--violet) 55%, var(--accent));
   --font-display: 'Manrope', system-ui, Segoe UI, Roboto, sans-serif;
+  --font-heading: 'futura-pt', 'Jost', system-ui, Segoe UI, Roboto, sans-serif;
 }
+h1, h2, h3, .section-title { font-family: var(--font-heading); }
 :root.using-keyboard *:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
