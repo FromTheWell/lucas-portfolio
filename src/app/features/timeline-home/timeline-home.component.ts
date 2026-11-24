@@ -8,7 +8,7 @@ import { TimelineItem, TimelineKind } from '../../models/timeline';
 // Helper: year string from ISO or 'present'
 function yearOf(date?: string): string {
 if (!date) return '';
-if (date.toLowerCase() === 'present') return 'Ahora';
+if (date.toLowerCase() === 'present') return 'Present';
 return new Date(date).getFullYear().toString();
 }
 
@@ -42,9 +42,9 @@ readonly visibleKinds = this.kinds.filter(k => k === 'all' || this.kindVisibilit
 kind = signal<(typeof this.kinds)[number]>('job');
 search = signal('');
 
-readonly kindLabels: Record<string, string> = {
-  all: 'Todos', job: 'Trabajo', project: 'Proyectos',
-  education: 'Educación', award: 'Premios', talk: 'Charlas', oss: 'Open Source'
+readonly kindLabels: Partial<Record<string, string>> = {
+  all: 'All', job: 'Work', project: 'Side Projects',
+  education: 'Education', award: 'Awards', talk: 'Talks', oss: 'Open Source'
 };
 
 
@@ -69,16 +69,16 @@ groups = computed(() => {
 const map = new Map<string, TimelineItem[]>();
 for (const it of this.items()) {
 const y = yearOf(it.end === 'present' ? new Date().toISOString() : (it.end || it.start));
-const key = y || 'Sin fecha';
+const key = y || 'No date';
 const arr = map.get(key) ?? [];
 arr.push(it);
 map.set(key, arr);
 }
-// Convert to array sorted by year desc ("Ahora" first)
+// Convert to array sorted by year desc ("Present" first)
 const entries = Array.from(map.entries());
 entries.sort((a, b) => {
-const ay = a[0] === 'Ahora' ? '9999' : a[0];
-const by = b[0] === 'Ahora' ? '9999' : b[0];
+const ay = a[0] === 'Present' ? '9999' : a[0];
+const by = b[0] === 'Present' ? '9999' : b[0];
 return by.localeCompare(ay);
 });
 return entries;
