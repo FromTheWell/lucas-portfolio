@@ -13,8 +13,9 @@ export const PROFILE = {
   ],
 } as const;
 
-// Optional: form backend (e.g. https://formspree.io/f/xxxx). Empty → the form opens the visitor's mail client.
-export const CONTACT_FORM_ENDPOINT = '';
+// Contact form backend (FormSubmit AJAX endpoint). After activating, you can swap the
+// email in the URL for the random alias FormSubmit sends you.
+export const CONTACT_FORM_ENDPOINT = 'https://formsubmit.co/ajax/lucas23delp@gmail.com';
 
 // ── Services ────────────────────────────────────────────
 export interface Service {

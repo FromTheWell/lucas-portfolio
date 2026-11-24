@@ -37,6 +37,9 @@ input, textarea {
 textarea { resize: vertical; min-height: 7rem; }
 .error { color: #f7a1c4; font-size: .78rem; }
 
+// Honeypot: off-screen rather than display:none, so bots still "see" and fill it
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
 .submit-row { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; margin-top: 1.25rem; }
 .status { margin: 0; font-size: .85rem; color: var(--muted); }
 

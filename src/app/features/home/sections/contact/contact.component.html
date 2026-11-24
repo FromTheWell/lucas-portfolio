@@ -42,6 +42,12 @@
       [attr.aria-invalid]="invalid('message')"></textarea>
     @if (invalid('message')) { <small class="error">Your message should be at least 10 characters.</small> }
 
+    <!-- Honeypot: invisible to people, leave empty -->
+    <div class="hp" aria-hidden="true">
+      <label for="cf-website">Website</label>
+      <input id="cf-website" formControlName="website" tabindex="-1" autocomplete="off" />
+    </div>
+
     <div class="submit-row">
       <button class="btn-glow" type="submit" [disabled]="status() === 'sending'">
         {{ status() === 'sending' ? 'Sending…' : 'Send' }}

@@ -21,6 +21,8 @@ export class ContactComponent {
     name: ['', [Validators.required, Validators.maxLength(80)]],
     email: ['', [Validators.required, Validators.email]],
     message: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(2000)]],
+    // Honeypot: hidden from humans, bots tend to fill it in
+    website: [''],
   });
   status = signal<Status>('idle');
 
@@ -31,13 +33,11 @@ export class ContactComponent {
 
   async submit(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const { name, email, message } = this.form.getRawValue();
+    const { name, email, message, website } = this.form.getRawValue();
 
-    // No backend configured: hand the message to the visitor's mail client
-    if (!CONTACT_FORM_ENDPOINT) {
-      const subject = encodeURIComponent(`Portfolio contact – ${name}`);
-      const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-      window.location.href = `mailto:${this.profile.email}?subject=${subject}&body=${body}`;
+    // Honeypot filled → almost certainly a bot: pretend success, send nothing
+    if (website) {
+      this.form.reset();
       this.status.set('sent');
       return;
     }
@@ -47,9 +47,17 @@ export class ContactComponent {
       const res = await fetch(CONTACT_FORM_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _subject: `Portfolio contact – ${name}`,
+          _template: 'table',
+          _honey: website, // FormSubmit also discards submissions where this is filled
+        }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || String(data?.success) !== 'true') throw new Error(data?.message ?? `HTTP ${res.status}`);
       this.form.reset();
       this.status.set('sent');
     } catch {
