@@ -35,8 +35,8 @@ export const SERVICES: Service[] = [
   {
     id: 'backend',
     title: 'Backend Development',
-    description: 'I design REST APIs and business logic with Spring Boot and PHP on top of MySQL, owning the API contract end to end so frontend and backend evolve together.',
-    tags: ['Spring Boot', 'Java', 'PHP', 'MySQL'],
+    description: 'I design REST APIs and business logic with Spring Boot on top of PostgreSQL, owning the API contract end to end so frontend and backend evolve together.',
+    tags: ['Spring Boot', 'Java', 'PostgreSQL'],
   },
 ];
 
@@ -58,11 +58,19 @@ const TECH_ICONS: Array<{ match: RegExp; label: string; icon: string }> = [
   { match: /^storybook$/i, label: 'Storybook', icon: 'storybook' },
   { match: /^cypress$/i, label: 'Cypress', icon: 'cypress' },
   { match: /^jenkins$/i, label: 'Jenkins', icon: 'jenkins' },
+  { match: /^python$/i, label: 'Python', icon: 'python' },
+  { match: /^react$/i, label: 'React', icon: 'react' },
+  { match: /^next(\.?js)?$/i, label: 'Next.js', icon: 'nextjs' },
+  { match: /^node(\.?js)?$/i, label: 'Node.js', icon: 'nodejs' },
+  { match: /^postgre(s|sql)$/i, label: 'PostgreSQL', icon: 'postgresql' },
 ];
+
+// Skills shown even if no timeline entry uses them yet
+const EXTRA_SKILLS = ['react', 'nextjs', 'nodejs', 'postgresql'];
 
 export const SKILLS: Skill[] = (() => {
   // Most used technologies first
-  const count = new Map<string, number>();
+  const count = new Map<string, number>(EXTRA_SKILLS.map(icon => [icon, 0]));
   for (const it of TIMELINE) {
     for (const t of new Set(it.tech ?? [])) {
       const def = TECH_ICONS.find(d => d.match.test(t.trim()));
