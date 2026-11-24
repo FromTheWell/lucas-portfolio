@@ -4,6 +4,21 @@ import { TimelineItem } from '../models/timeline';
 export const TIMELINE: TimelineItem[] = [
 
 {
+id: '2026-meet-hints',
+kind: 'project',
+title: 'meet-hints',
+org: 'Side Project',
+description: 'CLI tool that records meetings, transcribes audio with Whisper, analyzes the transcript with Claude, and exports a structured summary to Notion.',
+tech: ['Python'],
+start: '2026-01',
+end: 'present',
+highlight: true,
+links: [
+{ label: 'meet-hints : Github', url: 'https://github.com/FromTheWell/meet-hints' },
+]
+},
+
+{
 id: '2026-BetweenTech',
 kind: 'job',
 title: 'FullStack Developer (Angular/SpringBoot)',
@@ -17,7 +32,7 @@ links: [
 { label: 'LeadMind', url: 'https://www.cafmobility.com/soluciones/servicios/' },
 ]
 },
-  {
+{
 id: '2025-workout-app',
 kind: 'project',
 title: 'Workout & Training Management App',
@@ -26,10 +41,7 @@ description: 'A personal project to develop a workout and training management ap
 tech: ['Angular 19', 'Javascript', 'PHP', 'MySQL', 'RxJS', 'Bootstrap', 'Performance Optimization'],
 start: '2025-03',
 end: 'present',
-highlight: true,
-links: [
-{ label: 'Panel de entrenamientos : Github', url: 'https://github.com/FromTheWell/panel-entrenamientos-angular-php' },
-]
+highlight: true
 },
 {
 id: '2025-misquad',

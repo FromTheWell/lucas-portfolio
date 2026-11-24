@@ -94,6 +94,7 @@ const PREVIEWS: Record<string, string> = {
   'https://hub.isquad.es/': 'isquad',
   'https://www.jccm.es/': 'jccm',
   'https://www.futurespace.es/plataforma-de-investigacion/': 'smartgraph',
+  'https://github.com/FromTheWell/meet-hints': 'meet-hints',
 };
 
 export const PORTFOLIO: PortfolioItem[] = TIMELINE
