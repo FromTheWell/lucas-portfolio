@@ -1,8 +1,8 @@
 # LucasPortfolio
 
-Live site: https://fromthewell.github.io/lucas-portfolio/
+Public URL: https://fromthewell.github.io/lucas-portfolio/
 
-GitHub Actions deploys the portfolio to GitHub Pages on every push to `master`.
+To activate the site, open **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. Then run the **Deploy portfolio to GitHub Pages** workflow from the Actions tab. After the first successful deployment, every push to `master` publishes the portfolio automatically.
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.18.
 
